@@ -1,5 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flaskext.mysql import MySQL
+
 app = Flask(__name__)
+mysql = MySQL()
+
+app.config['MYSQL_DATABASE_USER'] = 'user'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
+app.config['MYSQL_DATABASE_DB'] = 'database'
+app.config['MYSQL_DATABASE_HOST'] = 'host'
+mysql.init_app(app)
 
 @app.route('/')
 def home():
@@ -15,7 +24,42 @@ def register():
 
 @app.route('/members')
 def members():
-   return render_template('members.html')
+   conn = mysql.connect()
+   cursor = conn.cursor()
+   cursor.execute("SELECT * FROM members")
+   result = cursor.fetchall()
+   return render_template('members.html', members=result)
+
+@app.route('/add_member', methods=['POST'])
+def add_member():
+   name = request.form['name']
+   email = request.form['email']
+   phone = request.form['phone']
+   conn = mysql.connect()
+   cursor = conn.cursor()
+   cursor.execute("INSERT INTO members (name, email, phone) VALUES (%s, %s, %s)", (name, email, phone))
+   conn.commit()
+   return redirect(url_for('members'))
+
+@app.route('/update_member/<id>', methods=['POST'])
+def update_member(id):
+   name = request.form['name']
+   email = request.form['email']
+   phone = request.form['phone']
+   conn = mysql.connect()
+   cursor = conn.cursor()
+   cursor.execute("UPDATE members SET name=%s, email=%s, phone=%s WHERE id=%s", (name, email, phone, id))
+   conn.commit()
+   return redirect(url_for('members'))
+
+@app.route('/delete_member/<id>', methods=['GET'])
+def delete_member(id):
+   conn = mysql.connect()
+   cursor = conn.cursor()
+   cursor.execute("DELETE FROM members WHERE id=%s", (id,))
+   conn.commit()
+   return redirect(url_for('members'))
 
 if __name__ == '__main__':
    app.run()
+
