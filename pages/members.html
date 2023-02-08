@@ -1,0 +1,30 @@
+<html>
+   <head>
+      <title>Members Page</title>
+   </head>
+   <body>
+      <h1>Members</h1>
+      <table>
+         <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+         </tr>
+         {% for member in members %}
+         <tr>
+            <td>{{ member[0] }}</td>
+            <td>{{ member[1] }}</td>
+            <td>{{ member[2] }}</td>
+            <td>{{ member[3] }}</td>
+            <td>
+               <a href="{{ url_for('update_member', id=member[0]) }}">Update</a> |
+               <a href="{{ url_for('delete_member', id=member[0]) }}">Delete</a>
+            </td>
+         </tr>
+         {% endfor %}
+      </table>
+      <a href="{{ url_for('add_member') }}">Add Member</a>
+   </body>
+</html>
