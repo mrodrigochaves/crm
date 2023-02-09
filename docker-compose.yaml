@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  mysqlsrv:
+    image: mysql:5.7
+    volumes:
+      - /var/lib/containers/disk01:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: password123
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password123
+      MYSQL_DATABASE: fedora_db
+    restart: always
+
+    networks:
+      - mysql-compose-network
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - mysql-compose-network
+
+networks: 
+  mysql-compose-network:
+    driver: bridge
