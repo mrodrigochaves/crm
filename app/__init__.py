@@ -1,18 +1,20 @@
+#import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for
-from flaskext.mysql import MySQL
 
-app = Flask(__name__)
-mysql = MySQL()
 
-app.config['MYSQL_DATABASE_USER'] = 'admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'password123'
-app.config['MYSQL_DATABASE_DB'] = 'fedora_db'
-app.config['MYSQL_DATABASE_HOST'] = 'host'
-mysql.init_app(app)
+# mydb = mysql.connector.connect(
+#    host = 'localhost',
+#    user = 'admin',
+#    password = 'Password123!',
+#    database = 'fedora_db',
 
-@app.route('/')
-def home():
-   return render_template('home.html')
+# )
+
+app=Flask(__name__,template_folder='templates')
+
+@app.route("/")
+def home(name=None):
+    return render_template('./home.html')
 
 @app.route('/login')
 def login():
@@ -24,10 +26,9 @@ def register():
 
 @app.route('/members')
 def members():
-   conn = mysql.connect()
-   cursor = conn.cursor()
-   cursor.execute("SELECT * FROM members")
-   result = cursor.fetchall()
+   conn = mydb.cursor()
+   conn.execute("SELECT * FROM members")
+   result = conn.fetchall()
    return render_template('members.html', members=result)
 
 @app.route('/add_member', methods=['POST'])
@@ -36,8 +37,8 @@ def add_member():
    email = request.form['email']
    phone = request.form['phone']
    conn = mysql.connect()
-   cursor = conn.cursor()
-   cursor.execute("INSERT INTO members (name, email, phone) VALUES (%s, %s, %s)", (name, email, phone))
+   conn = mydb.cursor()
+   conn.execute("INSERT INTO members (name, email, phone) VALUES (%s, %s, %s)", (name, email, phone))
    conn.commit()
    return redirect(url_for('members'))
 
@@ -47,19 +48,19 @@ def update_member(id):
    email = request.form['email']
    phone = request.form['phone']
    conn = mysql.connect()
-   cursor = conn.cursor()
-   cursor.execute("UPDATE members SET name=%s, email=%s, phone=%s WHERE id=%s", (name, email, phone, id))
+   conn = mydb.cursor()
+   conn.execute("UPDATE members SET name=%s, email=%s, phone=%s WHERE id=%s", (name, email, phone, id))
    conn.commit()
    return redirect(url_for('members'))
 
 @app.route('/delete_member/<id>', methods=['GET'])
 def delete_member(id):
    conn = mysql.connect()
-   cursor = conn.cursor()
-   cursor.execute("DELETE FROM members WHERE id=%s", (id,))
+   conn = mydb.cursor()
+   conn.execute("DELETE FROM members WHERE id=%s", (id,))
    conn.commit()
    return redirect(url_for('members'))
 
-if __name__ == '__main__':
-   app.run()
 
+if __name__ == '__main__':
+   app.run(debug=True, port=8051)
