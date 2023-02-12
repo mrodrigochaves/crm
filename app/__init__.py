@@ -22,9 +22,9 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-   username = request.form.username.data['username']
-   password = request.form.password.data['password']
-   query = "INSERT INTO members (name, username) VALUES (%s, %s)"
+   username = request.form.get('username', '', type=str)
+   password = request.form.get('password', '', type=str)
+   query = "INSERT INTO members (username, password) VALUES (%s, %s)"
    values = (username,password)
    cursor.execute(query, values)
    mydb.commit()
