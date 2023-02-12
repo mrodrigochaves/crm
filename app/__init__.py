@@ -40,8 +40,8 @@ def members():
 @app.route('/add_member', methods=['POST'])
 def add_member():
     username = request.form.username.data['username']
-    email = request.form['email']
-    phone = request.form['phone']
+    email = request.form.email.data['email']
+    phone = request.form.phone.data['phone']
     query = "INSERT INTO members (username, email, phone) VALUES (%s, %s, %s)"
     values = (username, email, phone)
     cursor.execute(query, values)
@@ -51,8 +51,8 @@ def add_member():
 @app.route('/update_member/<id>', methods=['POST'])
 def update_member(id):
     username = request.form.username.data['username']
-    email = request.form['email']
-    phone = request.form['phone']
+    email = request.form.email.data['email']
+    phone = request.form.phone.data['phone']
     query = "UPDATE members SET username=%s, email=%s, phone=%s WHERE id=%s"
     values = (username, email, phone, id)
     cursor.execute(query, values)
