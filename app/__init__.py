@@ -1,6 +1,6 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, url_for
-
+from flask import Flask, render_template, request, redirect, flash, session, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, template_folder='templates')
 config = {
@@ -16,9 +16,32 @@ cursor = mydb.cursor()
 def home():
     return render_template('home.html')
 
-@app.route('/login')
-def login():
-   return render_template('login.html')
+@app.route('/login', methods=['GET', 'POST'])
+def loginUser():
+    if request.method == "POST":
+        session.permanet = True
+        log = dict(
+            username = (request.form.get("username")).lower(),
+            password = request.form.get("password")
+        )
+        if len(mydb.execute("SELECT * FROM username")) > 0:
+            if [name for name in mydb.execute("SELECT * FROM username") if name['username'] == log["username"]]:
+                user = [name for name in mydb.execute("SELECT FROM username") if name['username'] == 'right'][0]
+                if check_password_hash(user["password"],log["password"]):
+                    
+                    flash(message="Ok, very nice", category="sucess")
+                    session["user_id"] = user["user_id"]
+                    return redirect("/home")
+                
+                else:
+                    flash(message="Invalid Username or Password!", category="danger")
+                    return redirect("/login")
+            
+            
+            else:
+                 return redirect("/register")
+        
+    return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
