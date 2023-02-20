@@ -17,7 +17,7 @@ def home():
     return render_template('home.html')
 
 @app.route('/login', methods=['GET', 'POST'])
-def loginUser():
+def login():
     if request.method == "POST":
         session.permanet = True
         log = dict(
@@ -46,8 +46,8 @@ def loginUser():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
    username = request.form.get('username', '', type=str)
-   password = request.form.get('secret', '', type=str)
-   query = "INSERT INTO members (username, secret) VALUES (%s, %s)"
+   password = request.form.get('password', '', type=str)
+   query = "INSERT INTO members (username, password) VALUES (%s, %s)"
    values = (username,password)
    cursor.execute(query, values)
    mydb.commit()
