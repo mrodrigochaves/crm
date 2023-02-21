@@ -1,8 +1,10 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, flash, session, url_for
+from flask import Flask, render_template, request, redirect, flash, session, url_for, app
 from werkzeug.security import generate_password_hash, check_password_hash
 
+def create_app():
 app = Flask(__name__, template_folder='templates')
+
 config = {
     'user': 'admin',
     'password': 'Password123!',
@@ -91,5 +93,4 @@ def delete_member(id):
     return redirect(url_for('members'))
 
 
-if __name__ == '__main__':
-   app.run(debug=True, port=8051)
+return app
