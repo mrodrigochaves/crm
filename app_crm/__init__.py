@@ -1,9 +1,11 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, flash, session, url_for, app
+from flask import Flask, render_template, request, redirect, flash, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 
 def create_app():
-app = Flask(__name__, template_folder='templates')
+    app = Flask(__name__) 
+
+#template_folder='templates'
 
 config = {
     'user': 'admin',
@@ -45,6 +47,8 @@ def login():
         
     return render_template('login.html')
 
+
+"""
 @app.route('/register', methods=['GET', 'POST'])
 def register():
    username = request.form.get('username', '', type=str)
@@ -92,5 +96,5 @@ def delete_member(id):
     mydb.commit()
     return redirect(url_for('members'))
 
-
+ """
 return app
